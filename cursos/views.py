@@ -3,7 +3,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
+from rest_framework import mixins
 from .models import Curso, Avaliacao
 from.serializers import CursoSerializer, AvaliacaoSerializer
 
@@ -12,14 +12,23 @@ API V1
 """
 
 class CursosAPIView(generics.ListCreateAPIView):
+    """
+    API de Cursos
+    """
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
 class CursoAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API de Avaliações
+    """
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
 class AvaliacoesAPIView(generics.ListCreateAPIView):
+    """
+    API de Avaliações
+    """
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
 
@@ -29,6 +38,9 @@ class AvaliacoesAPIView(generics.ListCreateAPIView):
         return self.queryset.all()
 
 class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API de Avaliações
+    """
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
 
@@ -44,7 +56,11 @@ class AvaliacaoAPIView(generics.RetrieveUpdateDestroyAPIView):
 API V2
 """
 
+
 class CursoViewSet(viewsets.ModelViewSet):
+    """
+    API de Cursos
+    """
     queryset = Curso.objects.all()
     serializer_class = CursoSerializer
 
@@ -54,6 +70,24 @@ class CursoViewSet(viewsets.ModelViewSet):
         serializer = AvaliacaoSerializer(curso.avaliacoes.all(), many=True)
         return Response(serializer.data)
 
+
+"""
 class AvaliacaoViewSet(viewsets.ModelViewSet):
+    queryset = Avaliacao.objects.all()
+    serializer_class = AvaliacaoSerializer
+"""
+
+
+class AvaliacaoViewSet(
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    """
+    API de Avaliações
+    """
     queryset = Avaliacao.objects.all()
     serializer_class = AvaliacaoSerializer
